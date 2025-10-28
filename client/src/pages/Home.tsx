@@ -1,6 +1,5 @@
 import Hero from "@/components/Hero";
 import ColorGrid from "@/components/ColorGrid";
-import AdPlaceholder from "@/components/AdPlaceholder";
 import CTACard from "@/components/CTACard";
 import HowItWorks from "@/components/HowItWorks";
 import WhyDesignersUse from "@/components/WhyDesignersUse";
@@ -13,19 +12,10 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-background">
       <Hero />
-      
-      <div className="max-w-7xl mx-auto px-6 md:px-8 mb-12">
-        <AdPlaceholder position="hero" />
-      </div>
-      
       <ColorGrid />
       
       <div className="max-w-7xl mx-auto px-6 md:px-8 my-16">
         <CTACard />
-      </div>
-      
-      <div className="max-w-7xl mx-auto px-6 md:px-8 mb-12">
-        <AdPlaceholder position="mid" />
       </div>
       
       <HowItWorks />
@@ -33,10 +23,6 @@ export default function Home() {
       <TintsShadesExplainer />
       <SupportedFormats />
       <FAQ />
-      
-      <div className="max-w-7xl mx-auto px-6 md:px-8 my-12">
-        <AdPlaceholder position="footer" />
-      </div>
       
       <Footer />
     </div>
