@@ -5,6 +5,14 @@ import { Card } from "@/components/ui/card";
 import { Sparkles, Trash2, Plus } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import chroma from "chroma-js";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
 
 interface ColorInputProps {
   onTestPalette: (colors: string[]) => void;
@@ -15,6 +23,8 @@ interface ColorInputProps {
 export default function ColorInput({ onTestPalette, onClear, currentColors = [] }: ColorInputProps) {
   const [inputValue, setInputValue] = useState(currentColors.join(", "));
   const [previewColors, setPreviewColors] = useState<string[]>([]);
+  const [showAddDialog, setShowAddDialog] = useState(false);
+  const [newColor, setNewColor] = useState("");
   const { toast } = useToast();
 
   // Update preview colors when input changes
@@ -62,6 +72,32 @@ export default function ColorInput({ onTestPalette, onClear, currentColors = [] 
     onClear();
   };
 
+  const handleAddColor = () => {
+    if (!newColor.trim()) return;
+    
+    try {
+      const validColor = chroma(newColor.trim()).hex();
+      const currentColors = inputValue
+        .split(/[,\n]+/)
+        .map(c => c.trim())
+        .filter(Boolean);
+      
+      currentColors.push(validColor);
+      const newValue = currentColors.join(", ");
+      setInputValue(newValue);
+      onTestPalette(currentColors);
+      setNewColor("");
+      setShowAddDialog(false);
+      toast({ description: "Color added!" });
+    } catch (e) {
+      toast({
+        title: "Invalid color",
+        description: "Please enter a valid HEX, RGB, or HSL color.",
+        variant: "destructive"
+      });
+    }
+  };
+
   return (
     <div className="w-full max-w-5xl mx-auto">
       <Card className="p-6 space-y-4">
@@ -97,7 +133,7 @@ export default function ColorInput({ onTestPalette, onClear, currentColors = [] 
             className="flex-1 min-w-[200px] bg-foreground text-background hover:bg-foreground/90"
             data-testid="button-test-palette"
           >
-            Test Palette
+            Generate Tints and Shades
           </Button>
           
           <Button
@@ -111,6 +147,16 @@ export default function ColorInput({ onTestPalette, onClear, currentColors = [] 
           </Button>
           
           <Button
+            onClick={() => setShowAddDialog(true)}
+            variant="outline"
+            size="icon"
+            className="h-11 w-11"
+            data-testid="button-add-color"
+          >
+            <Plus className="w-4 h-4" />
+          </Button>
+          
+          <Button
             onClick={handleClear}
             variant="outline"
             size="icon"
@@ -121,6 +167,45 @@ export default function ColorInput({ onTestPalette, onClear, currentColors = [] 
           </Button>
         </div>
       </Card>
+
+      {/* Add Color Dialog */}
+      <Dialog open={showAddDialog} onOpenChange={setShowAddDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Add Color</DialogTitle>
+          </DialogHeader>
+          <div className="py-4">
+            <Input
+              type="text"
+              placeholder="#FF6F61 or rgb(255,111,97)"
+              value={newColor}
+              onChange={(e) => setNewColor(e.target.value)}
+              onKeyDown={(e) => e.key === "Enter" && handleAddColor()}
+              className="font-mono"
+              data-testid="input-add-color"
+              autoFocus
+            />
+          </div>
+          <DialogFooter>
+            <Button
+              variant="outline"
+              onClick={() => {
+                setShowAddDialog(false);
+                setNewColor("");
+              }}
+              data-testid="button-cancel-add-color"
+            >
+              Cancel
+            </Button>
+            <Button
+              onClick={handleAddColor}
+              data-testid="button-confirm-add-color"
+            >
+              Add Color
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
