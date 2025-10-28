@@ -1,9 +1,10 @@
 import Hero from "@/components/Hero";
 import ColorGrid from "@/components/ColorGrid";
+import TintShadeExplainer from "@/components/TintShadeExplainer";
 import HowToUse from "@/components/HowToUse";
 import CTACard from "@/components/CTACard";
 import FeatureSection from "@/components/FeatureSection";
-import UseCases from "@/components/UseCases";
+import ColorPaletteFixerAd from "@/components/ColorPaletteFixerAd";
 import FAQ from "@/components/FAQ";
 import RelatedTools from "@/components/RelatedTools";
 import Footer from "@/components/Footer";
@@ -13,6 +14,7 @@ export default function Home() {
     <div className="min-h-screen bg-background">
       <Hero />
       <ColorGrid />
+      <TintShadeExplainer />
       <HowToUse />
       
       <div className="max-w-7xl mx-auto px-6 md:px-8 my-16">
@@ -20,7 +22,7 @@ export default function Home() {
       </div>
       
       <FeatureSection />
-      <UseCases />
+      <ColorPaletteFixerAd />
       <FAQ />
       <RelatedTools />
       

@@ -1,5 +1,5 @@
 import { CheckCircle2 } from "lucide-react";
-import exampleImage from "@assets/generated_images/color_tints_shades_grid_3fa36725.png";
+import exampleImage from "@assets/generated_images/color_tints_shades_grid_3d8cb71b.png";
 
 const features = [
   {
