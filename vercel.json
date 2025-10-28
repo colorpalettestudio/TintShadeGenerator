@@ -1,6 +1,6 @@
 {
-  "buildCommand": "npm run build:static",
-  "outputDirectory": "dist/client",
+  "buildCommand": "vite build",
+  "outputDirectory": "dist/public",
   "framework": null,
   "cleanUrls": true,
   "trailingSlash": false,
