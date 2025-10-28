@@ -72,32 +72,52 @@ export default function ColorMobileCard({ id, color, name, onRemove, tintSteps }
       <CardContent className="p-0">
         {/* Color swatches grid - 3 columns */}
         <div className="grid grid-cols-3 gap-0">
-          {swatches.map((swatch, index) => (
-            <button
-              key={`${id}-${index}`}
-              onClick={() => {
-                navigator.clipboard.writeText(swatch.color.toUpperCase());
-                toast({ description: "Copied!" });
-              }}
-              className="relative h-24 hover-elevate active-elevate-2 cursor-pointer group border-r border-b last:border-r-0"
-              style={{ backgroundColor: swatch.color }}
-              data-testid={`mobile-swatch-${id}-${index}`}
-              title={swatch.color.toUpperCase()}
-            >
-              {/* Label always visible on mobile */}
-              <div className="absolute inset-0 flex flex-col items-center justify-center p-2">
-                <span className="text-xs font-medium text-white drop-shadow-lg mb-1 font-mono">
-                  {swatch.color.toUpperCase()}
-                </span>
-                <span className="text-xs font-medium text-white/90 drop-shadow-lg">
-                  {swatch.label}
-                </span>
-              </div>
-              
-              {/* Darker overlay on press */}
-              <div className="absolute inset-0 bg-black/0 group-active:bg-black/20 transition-colors" />
-            </button>
-          ))}
+          {swatches.map((swatch, index) => {
+            // Calculate contrast - use black text on light backgrounds
+            const luminance = chroma(swatch.color).luminance();
+            const textColor = luminance > 0.5 ? '#000000' : '#ffffff';
+            const textOpacity = luminance > 0.5 ? 0.8 : 0.9;
+            
+            return (
+              <button
+                key={`${id}-${index}`}
+                onClick={() => {
+                  navigator.clipboard.writeText(swatch.color.toUpperCase());
+                  toast({ description: "Copied!" });
+                }}
+                className="relative h-24 hover-elevate active-elevate-2 cursor-pointer group border-r border-b last:border-r-0"
+                style={{ backgroundColor: swatch.color }}
+                data-testid={`mobile-swatch-${id}-${index}`}
+                title={swatch.color.toUpperCase()}
+              >
+                {/* Label always visible on mobile */}
+                <div className="absolute inset-0 flex flex-col items-center justify-center p-2">
+                  <span 
+                    className="text-xs font-medium mb-1 font-mono"
+                    style={{ 
+                      color: textColor,
+                      textShadow: luminance > 0.5 ? 'none' : '0 1px 2px rgba(0,0,0,0.3)'
+                    }}
+                  >
+                    {swatch.color.toUpperCase()}
+                  </span>
+                  <span 
+                    className="text-xs font-medium"
+                    style={{ 
+                      color: textColor,
+                      opacity: textOpacity,
+                      textShadow: luminance > 0.5 ? 'none' : '0 1px 2px rgba(0,0,0,0.3)'
+                    }}
+                  >
+                    {swatch.label}
+                  </span>
+                </div>
+                
+                {/* Darker overlay on press */}
+                <div className="absolute inset-0 bg-black/0 group-active:bg-black/20 transition-colors" />
+              </button>
+            );
+          })}
         </div>
         
         {/* Copy all button */}
