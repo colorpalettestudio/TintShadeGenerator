@@ -1,5 +1,4 @@
 const relatedTools = [
-  { name: "Color Palette Studio", href: "https://thecolorpalettestudio.com" },
   { name: "Color Palette Fixer", href: "https://colorpalettefixer.com" }
 ];
 
@@ -11,7 +10,16 @@ export default function Footer() {
           <div>
             <h3 className="font-semibold mb-4">Tint & Shade Generator</h3>
             <p className="text-sm text-muted-foreground">
-              Made with ❤️ by The Color Palette Studio
+              Made with ❤️ by{" "}
+              <a 
+                href="https://thecolorpalettestudio.com" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="hover:text-foreground transition-colors hover-elevate rounded px-1 -mx-1"
+                data-testid="link-color-palette-studio"
+              >
+                The Color Palette Studio
+              </a>
             </p>
           </div>
           
