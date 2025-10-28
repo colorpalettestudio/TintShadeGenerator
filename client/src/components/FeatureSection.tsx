@@ -1,20 +1,18 @@
-import { CheckCircle2, Palette, Zap, FileDown } from "lucide-react";
+import { CheckCircle2 } from "lucide-react";
+import exampleImage from "@assets/generated_images/color_tints_shades_grid_3fa36725.png";
 
 const features = [
   {
-    icon: Palette,
-    title: "Perfect for Design Systems",
-    description: "Build consistent UI states with mathematically precise tints and shades"
+    title: "Designer-Friendly Color Scales",
+    description: "Get perfectly smooth tints and shades without guesswork"
   },
   {
-    icon: Zap,
     title: "Instant Results",
-    description: "No sign-up, no waiting. Paste colors and get your palette in seconds"
+    description: "Paste your palette, get everything in one click — no login"
   },
   {
-    icon: FileDown,
-    title: "Export Everything",
-    description: "Download as PNG, PDF, or CSV for presentations and developer handoff"
+    title: "Export Ready",
+    description: "Grab PNG, PDF, or CSV for developers and clients"
   }
 ];
 
@@ -22,29 +20,41 @@ export default function FeatureSection() {
   return (
     <section className="w-full py-16 md:py-20 px-6 md:px-8 bg-muted/30">
       <div className="max-w-6xl mx-auto">
-        <div className="text-center mb-12">
-          <h2 className="text-3xl md:text-4xl font-bold mb-4">
-            Why Designers Love This Tool
-          </h2>
-          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            Create professional color scales without guesswork
-          </p>
-        </div>
-        
-        <div className="grid md:grid-cols-3 gap-8">
-          {features.map((feature, index) => (
-            <div 
-              key={index} 
-              className="text-center"
-              data-testid={`feature-${index}`}
-            >
-              <div className="inline-flex items-center justify-center w-14 h-14 rounded-xl bg-primary/10 text-primary mb-4">
-                <feature.icon className="w-7 h-7" />
-              </div>
-              <h3 className="text-lg font-semibold mb-2">{feature.title}</h3>
-              <p className="text-muted-foreground text-sm">{feature.description}</p>
+        <div className="grid md:grid-cols-2 gap-12 items-center">
+          {/* Image on the left */}
+          <div className="order-2 md:order-1">
+            <img 
+              src={exampleImage} 
+              alt="Tint and shade color scales example"
+              className="w-full rounded-lg border shadow-lg"
+              data-testid="feature-image"
+            />
+          </div>
+          
+          {/* Content on the right */}
+          <div className="order-1 md:order-2">
+            <h2 className="text-3xl md:text-4xl font-bold mb-8">
+              Why Designers Love This Tool
+            </h2>
+            
+            <div className="space-y-6">
+              {features.map((feature, index) => (
+                <div 
+                  key={index} 
+                  className="flex gap-4"
+                  data-testid={`feature-${index}`}
+                >
+                  <div className="flex-shrink-0">
+                    <CheckCircle2 className="w-6 h-6 text-primary" />
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-semibold mb-1">{feature.title}</h3>
+                    <p className="text-muted-foreground">{feature.description}</p>
+                  </div>
+                </div>
+              ))}
             </div>
-          ))}
+          </div>
         </div>
       </div>
     </section>
