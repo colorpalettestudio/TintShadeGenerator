@@ -140,8 +140,8 @@ export default function ColorGrid() {
   };
 
   return (
-    <section className="w-full py-12 px-6 md:px-8">
-      <div className="max-w-7xl mx-auto space-y-8">
+    <section className="w-full py-8 px-6 md:px-8">
+      <div className="max-w-7xl mx-auto space-y-6">
         <ColorInput 
           onTestPalette={handleTestPalette}
           onClear={clearPalette}
@@ -198,9 +198,9 @@ export default function ColorGrid() {
         )}
 
         {colors.length === 0 ? (
-          <div className="text-center py-16 border-2 border-dashed rounded-lg">
-            <p className="text-muted-foreground mb-2">Paste your colors above and click "Test Palette"</p>
-            <p className="text-sm text-muted-foreground">Or try the sample palette to see it in action</p>
+          <div className="text-center py-12 border-2 border-dashed rounded-lg">
+            <p className="text-muted-foreground mb-1">Add colors above to generate tints and shades</p>
+            <p className="text-sm text-muted-foreground">Try the sample palette to see it in action</p>
           </div>
         ) : (
           <div className="border rounded-lg overflow-hidden" id="color-table" data-testid="color-table">

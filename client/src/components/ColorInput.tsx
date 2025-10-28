@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Card } from "@/components/ui/card";
 import { Sparkles, Trash2, Pipette, Plus } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
@@ -71,11 +72,10 @@ export default function ColorInput({ onTestPalette, onClear, currentColors = [] 
   };
 
   return (
-    <div className="w-full max-w-5xl mx-auto space-y-4">
-      <div className="flex gap-2 flex-wrap items-end">
-        <div className="flex-1 min-w-[250px] space-y-1.5">
-          <label className="text-sm font-medium text-muted-foreground">Add a single color</label>
-          <div className="flex gap-2">
+    <div className="w-full max-w-5xl mx-auto">
+      <Card className="p-6 space-y-4">
+        <div className="space-y-3">
+          <div className="flex items-center gap-3">
             <Input
               type="text"
               placeholder="#FF6F61 or rgb(255,111,97)"
@@ -101,55 +101,54 @@ export default function ColorInput({ onTestPalette, onClear, currentColors = [] 
               data-testid="button-add-single-color"
             >
               <Plus className="w-4 h-4 mr-2" />
-              Add
+              Add Color
             </Button>
           </div>
+          
+          <div className="text-center">
+            <span className="text-sm text-muted-foreground">or</span>
+          </div>
+          
+          <Textarea
+            placeholder="Paste multiple colors (HEX, RGB, or HSL)&#10;#FF6F61, #6B5B95, #88B04B&#10;or one per line..."
+            value={inputValue}
+            onChange={(e) => setInputValue(e.target.value)}
+            className="min-h-[100px] font-mono text-sm resize-none"
+            data-testid="textarea-color-input"
+          />
         </div>
-      </div>
-
-      <div className="relative">
-        <div className="absolute -top-6 left-0 text-sm font-medium text-muted-foreground">
-          Or paste multiple colors
+        
+        <div className="flex gap-3 flex-wrap pt-2">
+          <Button 
+            onClick={handleTestPalette}
+            size="lg"
+            className="flex-1 min-w-[200px]"
+            data-testid="button-test-palette"
+          >
+            Test Palette
+          </Button>
+          
+          <Button
+            onClick={handleTrySample}
+            variant="outline"
+            size="lg"
+            data-testid="button-try-sample"
+          >
+            <Sparkles className="w-4 h-4 mr-2" />
+            Try Sample
+          </Button>
+          
+          <Button
+            onClick={onClear}
+            variant="outline"
+            size="lg"
+            data-testid="button-clear-palette"
+          >
+            <Trash2 className="w-4 h-4 mr-2" />
+            Clear
+          </Button>
         </div>
-        <Textarea
-          placeholder="Paste your colors here (HEX, RGB, or HSL)&#10;#FF6F61, #6B5B95, #88B04B&#10;or one per line..."
-          value={inputValue}
-          onChange={(e) => setInputValue(e.target.value)}
-          className="min-h-[120px] font-mono text-sm"
-          data-testid="textarea-color-input"
-        />
-      </div>
-      
-      <div className="flex gap-3 flex-wrap">
-        <Button 
-          onClick={handleTestPalette}
-          size="lg"
-          className="flex-1 min-w-[200px]"
-          data-testid="button-test-palette"
-        >
-          Test Palette
-        </Button>
-        
-        <Button
-          onClick={handleTrySample}
-          variant="outline"
-          size="lg"
-          data-testid="button-try-sample"
-        >
-          <Sparkles className="w-4 h-4 mr-2" />
-          Try Sample Palette
-        </Button>
-        
-        <Button
-          onClick={onClear}
-          variant="outline"
-          size="lg"
-          data-testid="button-clear-palette"
-        >
-          <Trash2 className="w-4 h-4 mr-2" />
-          Clear
-        </Button>
-      </div>
+      </Card>
     </div>
   );
 }
