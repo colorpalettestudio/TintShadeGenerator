@@ -1,12 +1,19 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { Download, Copy } from "lucide-react";
+import { Download, Copy, FileText, Image, File } from "lucide-react";
 import ColorInput from "./ColorInput";
 import ColorTableRow from "./ColorTableRow";
 import { useToast } from "@/hooks/use-toast";
 import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
 import chroma from "chroma-js";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+  DropdownMenuSeparator,
+} from "@/components/ui/dropdown-menu";
 import {
   DndContext,
   closestCenter,
@@ -131,7 +138,7 @@ export default function ColorGrid() {
       generateAllSwatches(c.color).map(s => s.color)
     ).join(', ');
     navigator.clipboard.writeText(allColors);
-    toast({ description: "All codes copied!" });
+    toast({ description: "All codes copied (comma-separated)!" });
     console.log("copy_all event (comma)");
   };
 
@@ -140,8 +147,21 @@ export default function ColorGrid() {
       generateAllSwatches(c.color).map(s => s.color)
     ).join('\n');
     navigator.clipboard.writeText(allColors);
-    toast({ description: "All codes copied!" });
+    toast({ description: "All codes copied (line-separated)!" });
     console.log("copy_all event (lines)");
+  };
+
+  const copyStudioCode = () => {
+    const colorData = colors.map(c => ({
+      hex: c.color.toLowerCase(),
+      name: ""
+    }));
+    
+    const studioCode = `studiocode?dataStyleName=null&numColorNamePairs=${colors.length}&colorNames=${encodeURIComponent(JSON.stringify(colorData))}&colorCombinationCheckboxes=${encodeURIComponent(JSON.stringify(new Array(16).fill(false)))}&selectedCombinations=${encodeURIComponent(JSON.stringify([]))}`;
+    
+    navigator.clipboard.writeText(studioCode);
+    toast({ description: "Studio Code copied to clipboard!" });
+    console.log("copy_studio_code event");
   };
 
   const exportPNG = async () => {
@@ -217,51 +237,48 @@ export default function ColorGrid() {
         />
 
         {colors.length > 0 && (
-          <div className="flex flex-wrap gap-2 justify-end">
-            <Button
-              variant="outline"
-              onClick={copyAllComma}
-              data-testid="button-copy-all-comma"
-            >
-              <Copy className="w-4 h-4 mr-2" />
-              Copy All (Comma)
-            </Button>
-            
-            <Button
-              variant="outline"
-              onClick={copyAllLines}
-              data-testid="button-copy-all-lines"
-            >
-              <Copy className="w-4 h-4 mr-2" />
-              Copy All (Lines)
-            </Button>
-            
-            <Button
-              variant="outline"
-              onClick={exportPNG}
-              data-testid="button-export-png"
-            >
-              <Download className="w-4 h-4 mr-2" />
-              PNG
-            </Button>
-            
-            <Button
-              variant="outline"
-              onClick={exportPDF}
-              data-testid="button-export-pdf"
-            >
-              <Download className="w-4 h-4 mr-2" />
-              PDF
-            </Button>
-            
-            <Button
-              variant="outline"
-              onClick={exportCSV}
-              data-testid="button-export-csv"
-            >
-              <Download className="w-4 h-4 mr-2" />
-              CSV
-            </Button>
+          <div className="flex justify-end">
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  variant="outline"
+                  size="lg"
+                  data-testid="button-export-menu"
+                >
+                  <Download className="w-4 h-4 mr-2" />
+                  Export
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-56">
+                <DropdownMenuItem onClick={copyAllComma} data-testid="menu-copy-all-comma">
+                  <Copy className="w-4 h-4 mr-2" />
+                  Copy All (Comma)
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={copyAllLines} data-testid="menu-copy-all-lines">
+                  <Copy className="w-4 h-4 mr-2" />
+                  Copy All (Lines)
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={copyStudioCode} data-testid="menu-copy-studio-code">
+                  <Copy className="w-4 h-4 mr-2" />
+                  Copy Studio Code
+                </DropdownMenuItem>
+                
+                <DropdownMenuSeparator />
+                
+                <DropdownMenuItem onClick={exportPNG} data-testid="menu-export-png">
+                  <Image className="w-4 h-4 mr-2" />
+                  Download PNG
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={exportPDF} data-testid="menu-export-pdf">
+                  <File className="w-4 h-4 mr-2" />
+                  Download PDF
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={exportCSV} data-testid="menu-export-csv">
+                  <FileText className="w-4 h-4 mr-2" />
+                  Download CSV
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
         )}
 
