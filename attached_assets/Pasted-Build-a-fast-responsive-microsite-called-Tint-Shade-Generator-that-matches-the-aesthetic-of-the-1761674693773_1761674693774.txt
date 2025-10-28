@@ -1,0 +1,48 @@
+Build a fast, responsive microsite called “Tint & Shade Generator” that matches the aesthetic of thecolorcodeconverter.com and colorpalettetester.com (Inter font, white canvas, rounded cards, subtle shadows, tasteful rainbow accent on a key word). The tool should:
+
+CORE FEATURES
+1) Let users add brand colors one-by-one OR bulk import a list (HEX, RGB, or HSL; comma- or newline-separated). Include an eyedropper input if available in the browser.
+2) For each base color, display a vertical column like the provided reference image showing:
+   - 5–6 Tints (lighter steps)
+   - Base color
+   - 5–6 Shades (darker steps)
+   Label each swatch with % (e.g., +10%, +20%, +30%, +40%, +50% for tints; −10%, −20%, −30%, −40%, −50% for shades). Show color name (user-provided or auto “Color 1”) and HEX under the column title.
+3) Copy actions:
+   - Click any swatch to copy its HEX code (show “Copied!” toast).
+   - “Copy Column” button to copy all codes for that color (top → bottom order).
+   - “Copy All” to copy every code from every column as a comma-separated list (and another button for line-by-line list).
+4) Reorder and manage:
+   - Allow 3–8 columns at a time.
+   - Drag to reorder columns.
+   - Add Color, Remove Color, Clear All.
+5) Import/Export:
+   - Bulk Import modal with textarea; parse HEX/RGB/HSL robustly; show preview and errors inline.
+   - Export: PNG and PDF of the grid, plus CSV of all codes (column name + step + hex).
+6) Ad placeholders (fixed height to avoid CLS): one below the hero, one mid-page (between grid and “How it works”), one above the footer.
+7) A CTA card promoting Color Palette Fixer (native, not intrusive).
+8) Include meta tags, Open Graph/Twitter tags, canonical, SoftwareApplication + FAQPage JSON-LD, robots.txt, sitemap.xml, GA4 placeholder, and simple /privacy-policy, /terms, /contact pages.
+
+VISUAL STYLE
+- Match CPS tools: generous whitespace, max content width 1200px, rounded 12–14px, light borders, soft shadows.
+- Grid layout: columns per color; left gutter shows % labels (25%, 50%, 75%, 100%, −25%, −50%, −75% OR use +/−10..50 as step labels) so the layout echoes the provided reference.
+- The word “Tint” or “Shades” in the H1 uses a gentle animated rainbow gradient but respect prefers-reduced-motion.
+- Each swatch shows a large color block and a small caption with HEX (uppercase) and the step label.
+
+ALGORITHM (use perceptual steps, don’t just mix with white/black)
+- Use OKLCH (preferred) or LCH/OKLab via chroma.js; fallback to HSL if needed.
+- Keep hue constant and adjust lightness in even steps:
+  • Compute tints by increasing L by [+10, +20, +30, +40, +50].
+  • Compute shades by decreasing L by [−10, −20, −30, −40, −50].
+  • Clamp values to valid range; preserve chroma so colors don’t go gray too fast; if clipping occurs, gradually reduce C toward mid-range to keep hue believable.
+- If OKLCH isn’t available, mix with #FFFFFF / #000000 using perceptual interpolation but strive to keep hue drift minimal.
+
+PERFORMANCE & ACCESSIBILITY
+- Lighthouse ≥ 90 on mobile and desktop.
+- Semantic headings; keyboard focus; large click targets; no layout shift when ads load (reserve height).
+- Respect prefers-reduced-motion for any animated gradient.
+
+EVENTS (GA4 placeholders only, wire to buttons)
+- tintshade_generate, copy_swatch, copy_column, copy_all, export_png, export_pdf, export_csv, bulk_import_open, bulk_import_confirm, fixer_cta_click.
+
+DELIVERABLES
+- A complete landing page + tool matching our brand suite, including hero, grid, How it Works, educational SEO sections, FAQ, related tools, footer, ad placeholders, and legal pages. Provide all text content and labels in-line.
