@@ -204,6 +204,39 @@ export default function ColorGrid() {
           </div>
         ) : (
           <div className="border rounded-lg overflow-hidden" id="color-table" data-testid="color-table">
+            {/* Category labels row */}
+            <div className="flex items-center gap-2 border-b bg-muted/30">
+              <div className="w-48 flex-shrink-0 border-r"></div>
+              
+              <div className="flex-1 flex overflow-x-auto">
+                <div className="flex-1 flex">
+                  {/* Tints section */}
+                  <div className="flex-[4] flex items-center justify-center py-2 border-r">
+                    <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                      Tints (Lighter)
+                    </span>
+                  </div>
+                  
+                  {/* Base section */}
+                  <div className="flex-[1] flex items-center justify-center py-2 border-r">
+                    <span className="text-xs font-semibold uppercase tracking-wider text-foreground">
+                      Base
+                    </span>
+                  </div>
+                  
+                  {/* Shades section */}
+                  <div className="flex-[4] flex items-center justify-center py-2">
+                    <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                      Shades (Darker)
+                    </span>
+                  </div>
+                </div>
+              </div>
+              
+              <div className="w-32 flex-shrink-0 border-l"></div>
+            </div>
+
+            {/* Percentage labels row */}
             <div className="flex items-center gap-2 border-b bg-muted/50">
               <div className="w-48 flex-shrink-0 p-3 border-r">
                 <div className="font-semibold text-sm">Base Color</div>
