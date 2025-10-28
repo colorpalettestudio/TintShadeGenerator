@@ -15,12 +15,19 @@ export default function ColorPaletteFixerAd() {
         <div className="grid md:grid-cols-2 gap-12 items-center">
           {/* Image on the left */}
           <div className="order-2 md:order-1">
-            <img 
-              src={fixerImage} 
-              alt="Color Palette Fixer interface showing harmony check and brand colors"
-              className="w-full rounded-lg"
-              data-testid="fixer-image"
-            />
+            <a 
+              href="https://thecolorpalettestudio.com/products/color-palette-fixer" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              data-testid="link-fixer-image"
+            >
+              <img 
+                src={fixerImage} 
+                alt="Color Palette Fixer interface showing harmony check and brand colors"
+                className="w-full rounded-lg hover-elevate cursor-pointer"
+                data-testid="fixer-image"
+              />
+            </a>
           </div>
           
           {/* Content on the right */}
@@ -51,7 +58,7 @@ export default function ColorPaletteFixerAd() {
               asChild
               data-testid="button-fix-palette"
             >
-              <a href="https://www.colorpalettefixer.com" target="_blank" rel="noopener noreferrer">
+              <a href="https://thecolorpalettestudio.com/products/color-palette-fixer" target="_blank" rel="noopener noreferrer">
                 Fix Your Color Palette
                 <ArrowRight className="ml-2 w-5 h-5" />
               </a>
