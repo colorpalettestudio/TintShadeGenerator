@@ -70,9 +70,9 @@ export default function ColorTableRow({ id, color, name, onRemove, onRename, tin
 
   return (
     <div className="flex items-center gap-2 border-b hover-elevate" data-testid={`row-${id}`}>
-      <div className="w-48 flex-shrink-0 p-3 flex items-center gap-2 border-r bg-muted/30">
+      <div className="w-48 flex-shrink-0 p-3 flex items-center gap-2 border-r bg-background">
         <div className="flex-1">
-          <div className="font-semibold text-base font-mono" data-testid={`text-row-color-${id}`}>
+          <div className="font-semibold text-base font-mono text-foreground" data-testid={`text-row-color-${id}`}>
             {color.toUpperCase()}
           </div>
         </div>
