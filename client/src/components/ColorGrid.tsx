@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { Download, Copy, FileText, Image, File } from "lucide-react";
 import ColorInput from "./ColorInput";
@@ -42,6 +42,78 @@ const TINT_STEPS = [95, 75, 50, 25, 0, -25, -50, -75, -95];
 export default function ColorGrid() {
   const [colors, setColors] = useState<Color[]>([]);
   const { toast } = useToast();
+  
+  // Undo/Redo state management
+  const historyRef = useRef<Color[][]>([]);
+  const historyIndexRef = useRef<number>(-1);
+  const isUndoRedoRef = useRef<boolean>(false);
+
+  // Save current state to history
+  const saveToHistory = useCallback((currentColors: Color[]) => {
+    if (isUndoRedoRef.current) return; // Don't save if we're doing undo/redo
+    
+    // Remove any future history if we're not at the end
+    if (historyIndexRef.current < historyRef.current.length - 1) {
+      historyRef.current = historyRef.current.slice(0, historyIndexRef.current + 1);
+    }
+    
+    // Add current state to history
+    historyRef.current.push(JSON.parse(JSON.stringify(currentColors)));
+    historyIndexRef.current = historyRef.current.length - 1;
+    
+    // Limit history to 50 states
+    if (historyRef.current.length > 50) {
+      historyRef.current.shift();
+      historyIndexRef.current--;
+    }
+  }, []);
+
+  // Undo function
+  const undo = useCallback(() => {
+    if (historyIndexRef.current > 0) {
+      isUndoRedoRef.current = true;
+      historyIndexRef.current--;
+      const previousState = historyRef.current[historyIndexRef.current];
+      setColors(JSON.parse(JSON.stringify(previousState)));
+      toast({ description: "Undone" });
+      setTimeout(() => {
+        isUndoRedoRef.current = false;
+      }, 0);
+    }
+  }, [toast]);
+
+  // Redo function
+  const redo = useCallback(() => {
+    if (historyIndexRef.current < historyRef.current.length - 1) {
+      isUndoRedoRef.current = true;
+      historyIndexRef.current++;
+      const nextState = historyRef.current[historyIndexRef.current];
+      setColors(JSON.parse(JSON.stringify(nextState)));
+      toast({ description: "Redone" });
+      setTimeout(() => {
+        isUndoRedoRef.current = false;
+      }, 0);
+    }
+  }, [toast]);
+
+  // Keyboard shortcuts for undo/redo
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      const isMac = navigator.platform.toUpperCase().indexOf('MAC') >= 0;
+      const cmdOrCtrl = isMac ? e.metaKey : e.ctrlKey;
+      
+      if (cmdOrCtrl && e.key === 'z' && !e.shiftKey) {
+        e.preventDefault();
+        undo();
+      } else if (cmdOrCtrl && e.shiftKey && e.key === 'z') {
+        e.preventDefault();
+        redo();
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [undo, redo]);
 
   // Auto-load sample palette on mount
   useEffect(() => {
@@ -63,8 +135,18 @@ export default function ColorGrid() {
     
     if (validColors.length > 0) {
       setColors(validColors);
+      // Initialize history with the first state
+      historyRef.current = [JSON.parse(JSON.stringify(validColors))];
+      historyIndexRef.current = 0;
     }
   }, []);
+
+  // Save to history whenever colors change (but not during undo/redo)
+  useEffect(() => {
+    if (!isUndoRedoRef.current && colors.length > 0) {
+      saveToHistory(colors);
+    }
+  }, [colors, saveToHistory]);
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
