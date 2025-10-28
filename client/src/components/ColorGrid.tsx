@@ -145,11 +145,14 @@ export default function ColorGrid() {
   };
 
   const exportPNG = async () => {
-    const gridElement = document.getElementById("color-table");
+    const gridElement = document.getElementById("export-view");
     if (!gridElement) return;
     
     try {
-      const canvas = await html2canvas(gridElement, { backgroundColor: "#ffffff" });
+      const canvas = await html2canvas(gridElement, { 
+        backgroundColor: "#ffffff",
+        scale: 2
+      });
       const link = document.createElement("a");
       link.download = "tint-shade-palette.png";
       link.href = canvas.toDataURL();
@@ -162,11 +165,14 @@ export default function ColorGrid() {
   };
 
   const exportPDF = async () => {
-    const gridElement = document.getElementById("color-table");
+    const gridElement = document.getElementById("export-view");
     if (!gridElement) return;
     
     try {
-      const canvas = await html2canvas(gridElement, { backgroundColor: "#ffffff" });
+      const canvas = await html2canvas(gridElement, { 
+        backgroundColor: "#ffffff",
+        scale: 2
+      });
       const imgData = canvas.toDataURL("image/png");
       const pdf = new jsPDF({
         orientation: canvas.width > canvas.height ? "landscape" : "portrait",
@@ -265,86 +271,164 @@ export default function ColorGrid() {
             <p className="text-sm text-muted-foreground">Try the sample palette to see it in action</p>
           </div>
         ) : (
-          <div className="border rounded-lg overflow-hidden" id="color-table" data-testid="color-table">
-            {/* Category labels row */}
-            <div className="flex items-center gap-2 border-b bg-muted/30">
-              <div className="w-48 flex-shrink-0 border-r"></div>
-              
-              <div className="flex-1 flex overflow-x-auto">
-                <div className="flex-1 flex">
-                  {/* Tints section */}
-                  <div className="flex-[4] flex items-center justify-center py-2 border-r">
-                    <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                      Tints (Lighter)
-                    </span>
-                  </div>
-                  
-                  {/* Base section */}
-                  <div className="flex-[1] flex items-center justify-center py-2 border-r">
-                    <span className="text-xs font-semibold uppercase tracking-wider text-foreground">
-                      Base
-                    </span>
-                  </div>
-                  
-                  {/* Shades section */}
-                  <div className="flex-[4] flex items-center justify-center py-2">
-                    <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                      Shades (Darker)
-                    </span>
-                  </div>
-                </div>
-              </div>
-              
-              <div className="w-32 flex-shrink-0 border-l"></div>
-            </div>
-
-            {/* Percentage labels row */}
-            <div className="flex items-center gap-2 border-b bg-muted/50">
-              <div className="w-48 flex-shrink-0 p-3 border-r">
-                <div className="font-semibold text-sm">Base Color</div>
-              </div>
-              
-              <div className="flex-1 flex overflow-x-auto">
-                {TINT_STEPS.map((step, index) => (
-                  <div
-                    key={index}
-                    className="flex-1 min-w-[80px] p-2 text-center"
-                  >
-                    <div className="text-xs font-medium text-muted-foreground">
-                      {step === 0 ? 'Base' : step > 0 ? `+${step}%` : `−${Math.abs(step)}%`}
+          <>
+            {/* Interactive view */}
+            <div className="border rounded-lg overflow-hidden" id="color-table" data-testid="color-table">
+              {/* Category labels row */}
+              <div className="flex items-center gap-2 border-b bg-muted/30">
+                <div className="w-48 flex-shrink-0 border-r"></div>
+                
+                <div className="flex-1 flex overflow-x-auto">
+                  <div className="flex-1 flex">
+                    {/* Tints section */}
+                    <div className="flex-[4] flex items-center justify-center py-2 border-r">
+                      <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                        Tints (Lighter)
+                      </span>
+                    </div>
+                    
+                    {/* Base section */}
+                    <div className="flex-[1] flex items-center justify-center py-2 border-r">
+                      <span className="text-xs font-semibold uppercase tracking-wider text-foreground">
+                        Base
+                      </span>
+                    </div>
+                    
+                    {/* Shades section */}
+                    <div className="flex-[4] flex items-center justify-center py-2">
+                      <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                        Shades (Darker)
+                      </span>
                     </div>
                   </div>
-                ))}
+                </div>
+                
+                <div className="w-32 flex-shrink-0 border-l"></div>
               </div>
-              
-              <div className="w-32 flex-shrink-0 p-3 border-l">
-                <div className="text-xs font-medium text-muted-foreground">Actions</div>
+
+              {/* Percentage labels row */}
+              <div className="flex items-center gap-2 border-b bg-muted/50">
+                <div className="w-48 flex-shrink-0 p-3 border-r">
+                  <div className="font-semibold text-sm">Base Color</div>
+                </div>
+                
+                <div className="flex-1 flex overflow-x-auto">
+                  {TINT_STEPS.map((step, index) => (
+                    <div
+                      key={index}
+                      className="flex-1 min-w-[80px] p-2 text-center"
+                    >
+                      <div className="text-xs font-medium text-muted-foreground">
+                        {step === 0 ? 'Base' : step > 0 ? `+${step}%` : `−${Math.abs(step)}%`}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+                
+                <div className="w-32 flex-shrink-0 p-3 border-l">
+                  <div className="text-xs font-medium text-muted-foreground">Actions</div>
+                </div>
               </div>
+
+              <DndContext
+                sensors={sensors}
+                collisionDetection={closestCenter}
+                onDragEnd={handleDragEnd}
+              >
+                <SortableContext
+                  items={colors.map(c => c.id)}
+                  strategy={verticalListSortingStrategy}
+                >
+                  {colors.map(color => (
+                    <ColorTableRow
+                      key={color.id}
+                      id={color.id}
+                      color={color.color}
+                      name={color.name}
+                      onRemove={removeColor}
+                      onRename={renameColor}
+                      tintSteps={TINT_STEPS}
+                    />
+                  ))}
+                </SortableContext>
+              </DndContext>
             </div>
 
-            <DndContext
-              sensors={sensors}
-              collisionDetection={closestCenter}
-              onDragEnd={handleDragEnd}
+            {/* Export-only view (hidden) */}
+            <div 
+              id="export-view" 
+              style={{ position: 'absolute', left: '-9999px', backgroundColor: '#ffffff' }}
             >
-              <SortableContext
-                items={colors.map(c => c.id)}
-                strategy={verticalListSortingStrategy}
-              >
-                {colors.map(color => (
-                  <ColorTableRow
-                    key={color.id}
-                    id={color.id}
-                    color={color.color}
-                    name={color.name}
-                    onRemove={removeColor}
-                    onRename={renameColor}
-                    tintSteps={TINT_STEPS}
-                  />
-                ))}
-              </SortableContext>
-            </DndContext>
-          </div>
+              <div style={{ padding: '40px', backgroundColor: '#ffffff' }}>
+                <h1 style={{ 
+                  fontSize: '32px', 
+                  fontWeight: 'bold', 
+                  marginBottom: '8px',
+                  color: '#000000',
+                  fontFamily: 'Inter, system-ui, sans-serif'
+                }}>
+                  Tint and Shade Palette
+                </h1>
+                <p style={{ 
+                  fontSize: '14px', 
+                  color: '#666666',
+                  marginBottom: '32px',
+                  fontFamily: 'Inter, system-ui, sans-serif'
+                }}>
+                  Generated with Tint & Shade Generator
+                </p>
+                
+                {colors.map((color, colorIndex) => {
+                  const swatches = generateAllSwatches(color.color);
+                  return (
+                    <div key={colorIndex} style={{ marginBottom: '32px' }}>
+                      <div style={{ 
+                        fontSize: '16px', 
+                        fontWeight: '600',
+                        marginBottom: '12px',
+                        color: '#000000',
+                        fontFamily: 'monospace'
+                      }}>
+                        {color.color.toUpperCase()}
+                      </div>
+                      
+                      <div style={{ display: 'flex', gap: '8px', marginBottom: '8px' }}>
+                        {swatches.map((swatch, swatchIndex) => (
+                          <div key={swatchIndex} style={{ flex: 1 }}>
+                            <div 
+                              style={{ 
+                                backgroundColor: swatch.color,
+                                height: '80px',
+                                border: '1px solid #e0e0e0',
+                                borderRadius: '4px'
+                              }}
+                            />
+                            <div style={{ 
+                              fontSize: '11px',
+                              textAlign: 'center',
+                              marginTop: '4px',
+                              fontFamily: 'monospace',
+                              color: '#000000'
+                            }}>
+                              {swatch.color.toUpperCase()}
+                            </div>
+                            <div style={{ 
+                              fontSize: '10px',
+                              textAlign: 'center',
+                              color: '#666666',
+                              fontFamily: 'system-ui, sans-serif'
+                            }}>
+                              {swatch.label}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          </>
         )}
       </div>
     </section>
