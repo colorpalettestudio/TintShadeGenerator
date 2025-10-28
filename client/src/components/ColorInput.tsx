@@ -20,6 +20,45 @@ interface ColorInputProps {
   currentColors: string[];
 }
 
+// Helper function to parse Studio Code
+function parseStudioCode(input: string): string[] | null {
+  try {
+    // Check if input contains studiocode
+    if (!input.includes('studiocode')) {
+      return null;
+    }
+
+    // Extract the query string part
+    const queryStart = input.indexOf('?');
+    if (queryStart === -1) {
+      return null;
+    }
+
+    const queryString = input.substring(queryStart + 1);
+    const params = new URLSearchParams(queryString);
+    const colorNamesParam = params.get('colorNames');
+    
+    if (!colorNamesParam) {
+      return null;
+    }
+
+    // Parse the JSON array
+    const colorData = JSON.parse(colorNamesParam);
+    
+    // Extract hex values
+    if (Array.isArray(colorData)) {
+      return colorData
+        .filter(item => item && item.hex)
+        .map(item => item.hex);
+    }
+    
+    return null;
+  } catch (e) {
+    console.error('Error parsing studio code:', e);
+    return null;
+  }
+}
+
 export default function ColorInput({ onTestPalette, onClear, currentColors = [] }: ColorInputProps) {
   const [inputValue, setInputValue] = useState(currentColors.join(", "));
   const [previewColors, setPreviewColors] = useState<string[]>([]);
@@ -29,6 +68,23 @@ export default function ColorInput({ onTestPalette, onClear, currentColors = [] 
 
   // Update preview colors when input changes
   useEffect(() => {
+    // First check if it's a Studio Code
+    const studioColors = parseStudioCode(inputValue);
+    if (studioColors) {
+      const validColors: string[] = [];
+      studioColors.forEach(color => {
+        try {
+          const validColor = chroma(color).hex();
+          validColors.push(validColor);
+        } catch (e) {
+          // Skip invalid colors
+        }
+      });
+      setPreviewColors(validColors);
+      return;
+    }
+
+    // Otherwise parse as regular color list
     const colors = inputValue
       .split(/[,\n]+/)
       .map(c => c.trim())
@@ -48,6 +104,16 @@ export default function ColorInput({ onTestPalette, onClear, currentColors = [] 
   }, [inputValue]);
 
   const handleTestPalette = () => {
+    // First check if it's a Studio Code
+    const studioColors = parseStudioCode(inputValue);
+    if (studioColors && studioColors.length > 0) {
+      onTestPalette(studioColors);
+      toast({ description: `Imported ${studioColors.length} colors from Studio Code!` });
+      console.log("Studio Code imported:", studioColors);
+      return;
+    }
+
+    // Otherwise parse as regular color list
     const colors = inputValue
       .split(/[,\n]+/)
       .map(c => c.trim())
@@ -118,7 +184,7 @@ export default function ColorInput({ onTestPalette, onClear, currentColors = [] 
 
         {/* Textarea for color input */}
         <Textarea
-          placeholder="Enter colors separated by commas or line breaks&#10;#f91d71, #fd806a, #ffd025, #74d551, #76c4f4, #7c70ff"
+          placeholder="Enter colors, comma-separated or line breaks&#10;#f91d71, #fd806a, #ffd025&#10;&#10;Or paste a Studio Code from Color Palette Studio"
           value={inputValue}
           onChange={(e) => setInputValue(e.target.value)}
           className="min-h-[120px] font-mono text-sm resize-none"
