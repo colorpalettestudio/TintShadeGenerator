@@ -1,7 +1,9 @@
 import { Button } from "@/components/ui/button";
-import { Copy, X } from "lucide-react";
+import { Copy, X, GripVertical } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import chroma from "chroma-js";
+import { useSortable } from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
 
 interface ColorTableRowProps {
   id: string;
@@ -58,6 +60,20 @@ function generateTintsAndShades(baseColor: string, steps: number[]): ColorSwatch
 
 export default function ColorTableRow({ id, color, name, onRemove, onRename, tintSteps }: ColorTableRowProps) {
   const { toast } = useToast();
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({ id });
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    opacity: isDragging ? 0.5 : 1,
+  };
   
   const swatches = generateTintsAndShades(color, tintSteps);
 
@@ -69,8 +85,22 @@ export default function ColorTableRow({ id, color, name, onRemove, onRename, tin
   };
 
   return (
-    <div className="flex items-center gap-2 border-b hover-elevate" data-testid={`row-${id}`}>
+    <div 
+      ref={setNodeRef}
+      style={style}
+      className="flex items-center gap-2 border-b hover-elevate group"
+      data-testid={`row-${id}`}
+    >
       <div className="w-48 flex-shrink-0 p-3 flex items-center gap-2 border-r bg-background">
+        <button
+          className="cursor-grab active:cursor-grabbing opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0"
+          {...attributes}
+          {...listeners}
+          data-testid={`drag-handle-${id}`}
+        >
+          <GripVertical className="w-4 h-4 text-muted-foreground" />
+        </button>
+        
         <div className="flex-1">
           <div className="font-semibold text-base font-mono text-foreground" data-testid={`text-row-color-${id}`}>
             {color.toUpperCase()}
@@ -96,12 +126,12 @@ export default function ColorTableRow({ id, color, name, onRemove, onRename, tin
               navigator.clipboard.writeText(swatch.color.toUpperCase());
               toast({ description: "Copied!" });
             }}
-            className="flex-1 min-w-[80px] h-16 hover-elevate active-elevate-2 cursor-pointer group relative"
+            className="flex-1 min-w-[80px] h-16 hover-elevate active-elevate-2 cursor-pointer group/swatch relative"
             style={{ backgroundColor: swatch.color }}
             data-testid={`swatch-${id}-${index}`}
             title={swatch.color.toUpperCase()}
           >
-            <div className="absolute inset-0 flex items-center justify-center bg-black/40 backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-opacity">
+            <div className="absolute inset-0 flex items-center justify-center bg-black/40 backdrop-blur-sm opacity-0 group-hover/swatch:opacity-100 transition-opacity">
               <span className="text-xs font-medium text-white font-mono">
                 {swatch.color.toUpperCase()}
               </span>

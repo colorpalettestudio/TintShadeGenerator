@@ -7,6 +7,21 @@ import { useToast } from "@/hooks/use-toast";
 import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
 import chroma from "chroma-js";
+import {
+  DndContext,
+  closestCenter,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  DragEndEvent,
+} from '@dnd-kit/core';
+import {
+  arrayMove,
+  SortableContext,
+  sortableKeyboardCoordinates,
+  verticalListSortingStrategy,
+} from '@dnd-kit/sortable';
 
 interface Color {
   id: string;
@@ -20,6 +35,30 @@ const TINT_STEPS = [95, 75, 50, 25, 0, -25, -50, -75, -95];
 export default function ColorGrid() {
   const [colors, setColors] = useState<Color[]>([]);
   const { toast } = useToast();
+
+  const sensors = useSensors(
+    useSensor(PointerSensor, {
+      activationConstraint: {
+        distance: 8,
+      },
+    }),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    })
+  );
+
+  const handleDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event;
+
+    if (over && active.id !== over.id) {
+      setColors((items) => {
+        const oldIndex = items.findIndex((item) => item.id === active.id);
+        const newIndex = items.findIndex((item) => item.id === over.id);
+
+        return arrayMove(items, oldIndex, newIndex);
+      });
+    }
+  };
 
   const handleTestPalette = (colorInputs: string[]) => {
     const validColors: Color[] = [];
@@ -260,17 +299,28 @@ export default function ColorGrid() {
               </div>
             </div>
 
-            {colors.map(color => (
-              <ColorTableRow
-                key={color.id}
-                id={color.id}
-                color={color.color}
-                name={color.name}
-                onRemove={removeColor}
-                onRename={renameColor}
-                tintSteps={TINT_STEPS}
-              />
-            ))}
+            <DndContext
+              sensors={sensors}
+              collisionDetection={closestCenter}
+              onDragEnd={handleDragEnd}
+            >
+              <SortableContext
+                items={colors.map(c => c.id)}
+                strategy={verticalListSortingStrategy}
+              >
+                {colors.map(color => (
+                  <ColorTableRow
+                    key={color.id}
+                    id={color.id}
+                    color={color.color}
+                    name={color.name}
+                    onRemove={removeColor}
+                    onRename={renameColor}
+                    tintSteps={TINT_STEPS}
+                  />
+                ))}
+              </SortableContext>
+            </DndContext>
           </div>
         )}
       </div>
