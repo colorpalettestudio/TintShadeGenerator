@@ -11,8 +11,8 @@ export default function Home() {
     <div className="min-h-screen bg-background">
       <Hero />
       <ColorGrid />
-      <TintShadeExplainer />
       <HowToUse />
+      <TintShadeExplainer />
       <FeatureSection />
       <ColorPaletteFixerAd />
       
