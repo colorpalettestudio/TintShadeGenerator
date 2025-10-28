@@ -13,14 +13,7 @@ export default function Hero() {
         </Badge>
         
         <h1 className="text-5xl md:text-6xl font-bold mb-6 leading-tight">
-          Build Perfect{" "}
-          <span 
-            className="bg-gradient-to-r from-red-500 via-yellow-500 via-green-500 via-blue-500 to-purple-500 bg-[length:200%_auto] bg-clip-text text-transparent motion-safe:animate-rainbow-gradient"
-            style={{ WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}
-          >
-            Tints & Shades
-          </span>{" "}
-          for Your Brand
+          Tint and Shade Generator
         </h1>
         
         <p className="text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed mb-8">
