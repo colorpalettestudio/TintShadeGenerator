@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Download, Copy, FileText, Image, File } from "lucide-react";
 import ColorInput from "./ColorInput";
 import ColorTableRow from "./ColorTableRow";
+import ColorMobileCard from "./ColorMobileCard";
 import { useToast } from "@/hooks/use-toast";
 import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
@@ -371,13 +372,22 @@ export default function ColorGrid() {
           </div>
         ) : (
           <>
-            {/* Mobile scroll hint */}
-            <div className="md:hidden text-center text-xs text-muted-foreground mb-2">
-              ← Swipe to see all tints & shades →
+            {/* Mobile card view */}
+            <div className="md:hidden space-y-4">
+              {colors.map(color => (
+                <ColorMobileCard
+                  key={color.id}
+                  id={color.id}
+                  color={color.color}
+                  name={color.name}
+                  onRemove={removeColor}
+                  tintSteps={TINT_STEPS}
+                />
+              ))}
             </div>
 
-            {/* Interactive view with mobile-friendly scrolling */}
-            <div className="border rounded-lg overflow-x-auto" id="color-table" data-testid="color-table">
+            {/* Desktop table view */}
+            <div className="hidden md:block border rounded-lg overflow-x-auto" id="color-table" data-testid="color-table">
               <div className="min-w-[800px]">
                 {/* Category labels row */}
                 <div className="flex items-center gap-2 border-b bg-muted/30">
