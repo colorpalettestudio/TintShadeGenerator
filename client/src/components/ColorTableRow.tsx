@@ -1,6 +1,4 @@
-import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Copy, X } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import chroma from "chroma-js";
@@ -59,8 +57,6 @@ function generateTintsAndShades(baseColor: string, steps: number[]): ColorSwatch
 }
 
 export default function ColorTableRow({ id, color, name, onRemove, onRename, tintSteps }: ColorTableRowProps) {
-  const [isEditingName, setIsEditingName] = useState(false);
-  const [editedName, setEditedName] = useState(name);
   const { toast } = useToast();
   
   const swatches = generateTintsAndShades(color, tintSteps);
@@ -72,39 +68,14 @@ export default function ColorTableRow({ id, color, name, onRemove, onRename, tin
     console.log("copy_row event:", allColors);
   };
 
-  const handleNameSubmit = () => {
-    if (editedName.trim()) {
-      onRename(id, editedName.trim());
-    }
-    setIsEditingName(false);
-  };
-
   return (
     <div className="flex items-center gap-2 border-b hover-elevate" data-testid={`row-${id}`}>
       <div className="w-48 flex-shrink-0 p-3 flex items-center gap-2 border-r bg-muted/30">
-        {isEditingName ? (
-          <Input
-            value={editedName}
-            onChange={(e) => setEditedName(e.target.value)}
-            onBlur={handleNameSubmit}
-            onKeyDown={(e) => e.key === "Enter" && handleNameSubmit()}
-            autoFocus
-            className="h-8 text-sm flex-1"
-            data-testid={`input-rename-${id}`}
-          />
-        ) : (
-          <div 
-            className="flex-1 cursor-pointer hover-elevate rounded px-2 py-1 -mx-2"
-            onClick={() => setIsEditingName(true)}
-          >
-            <div className="font-semibold text-sm truncate" data-testid={`text-row-name-${id}`}>
-              {name}
-            </div>
-            <div className="text-xs text-muted-foreground font-mono" data-testid={`text-row-color-${id}`}>
-              {color.toUpperCase()}
-            </div>
+        <div className="flex-1">
+          <div className="font-semibold text-base font-mono" data-testid={`text-row-color-${id}`}>
+            {color.toUpperCase()}
           </div>
-        )}
+        </div>
         
         <Button
           size="icon"

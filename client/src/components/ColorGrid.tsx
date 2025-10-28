@@ -30,7 +30,7 @@ export default function ColorGrid() {
         validColors.push({
           id: `color-${Date.now()}-${index}`,
           color: validColor,
-          name: `Color ${index + 1}`
+          name: validColor.toUpperCase()
         });
       } catch (e) {
         console.log("Invalid color skipped:", colorInput);
@@ -121,11 +121,11 @@ export default function ColorGrid() {
   };
 
   const exportCSV = () => {
-    const rows = ["Color Name,Base Color,Step,HEX"];
+    const rows = ["Color,Step,HEX"];
     colors.forEach(color => {
       const swatches = generateAllSwatches(color.color);
       swatches.forEach(swatch => {
-        rows.push(`${color.name},${color.color},${swatch.label},${swatch.color}`);
+        rows.push(`${color.color.toUpperCase()},${swatch.label},${swatch.color}`);
       });
     });
     
@@ -206,7 +206,7 @@ export default function ColorGrid() {
           <div className="border rounded-lg overflow-hidden" id="color-table" data-testid="color-table">
             <div className="flex items-center gap-2 border-b bg-muted/50">
               <div className="w-48 flex-shrink-0 p-3 border-r">
-                <div className="font-semibold text-sm">Color Name</div>
+                <div className="font-semibold text-sm">Base Color</div>
               </div>
               
               <div className="flex-1 flex overflow-x-auto">
