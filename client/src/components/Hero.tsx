@@ -12,7 +12,7 @@ export default function Hero() {
           Free, Instant & No Sign-Up
         </Badge>
         
-        <h1 className="text-5xl md:text-6xl font-bold mb-6 leading-tight">
+        <h1 className="text-6xl md:text-7xl font-bold mb-6 leading-tight">
           Tint and Shade Generator
         </h1>
         
