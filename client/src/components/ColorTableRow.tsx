@@ -91,9 +91,9 @@ export default function ColorTableRow({ id, color, name, onRemove, onRename, tin
       className="flex items-center gap-2 border-b hover-elevate group"
       data-testid={`row-${id}`}
     >
-      <div className="w-48 flex-shrink-0 p-3 flex items-center gap-2 border-r bg-background">
+      <div className="w-32 md:w-48 flex-shrink-0 p-2 md:p-3 flex items-center gap-1 md:gap-2 border-r bg-background">
         <button
-          className="cursor-grab active:cursor-grabbing opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0"
+          className="cursor-grab active:cursor-grabbing opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0 hidden md:block"
           {...attributes}
           {...listeners}
           data-testid={`drag-handle-${id}`}
@@ -101,8 +101,8 @@ export default function ColorTableRow({ id, color, name, onRemove, onRename, tin
           <GripVertical className="w-4 h-4 text-muted-foreground" />
         </button>
         
-        <div className="flex-1">
-          <div className="font-semibold text-base font-mono text-foreground" data-testid={`text-row-color-${id}`}>
+        <div className="flex-1 min-w-0">
+          <div className="font-semibold text-xs md:text-base font-mono text-foreground truncate" data-testid={`text-row-color-${id}`}>
             {color.toUpperCase()}
           </div>
         </div>
@@ -111,14 +111,14 @@ export default function ColorTableRow({ id, color, name, onRemove, onRename, tin
           size="icon"
           variant="ghost"
           onClick={() => onRemove(id)}
-          className="h-7 w-7 flex-shrink-0"
+          className="h-6 w-6 md:h-7 md:w-7 flex-shrink-0"
           data-testid={`button-remove-row-${id}`}
         >
           <X className="w-3 h-3" />
         </Button>
       </div>
       
-      <div className="flex-1 flex overflow-x-auto">
+      <div className="flex-1 flex">
         {swatches.map((swatch, index) => (
           <button
             key={`${id}-${index}`}
@@ -126,7 +126,7 @@ export default function ColorTableRow({ id, color, name, onRemove, onRename, tin
               navigator.clipboard.writeText(swatch.color.toUpperCase());
               toast({ description: "Copied!" });
             }}
-            className="flex-1 min-w-[80px] h-16 hover-elevate active-elevate-2 cursor-pointer group/swatch relative"
+            className="flex-1 min-w-[70px] md:min-w-[80px] h-14 md:h-16 hover-elevate active-elevate-2 cursor-pointer group/swatch relative"
             style={{ backgroundColor: swatch.color }}
             data-testid={`swatch-${id}-${index}`}
             title={swatch.color.toUpperCase()}
@@ -140,16 +140,16 @@ export default function ColorTableRow({ id, color, name, onRemove, onRename, tin
         ))}
       </div>
       
-      <div className="w-32 flex-shrink-0 p-2 border-l">
+      <div className="w-24 md:w-32 flex-shrink-0 p-1.5 md:p-2 border-l">
         <Button
           variant="outline"
           size="sm"
           onClick={copyRow}
-          className="w-full"
+          className="w-full text-xs md:text-sm px-1 md:px-3"
           data-testid={`button-copy-row-${id}`}
         >
-          <Copy className="w-3 h-3 mr-1" />
-          Copy Row
+          <Copy className="w-3 h-3 md:mr-1" />
+          <span className="hidden md:inline">Copy Row</span>
         </Button>
       </div>
     </div>

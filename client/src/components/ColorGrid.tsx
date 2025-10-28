@@ -310,7 +310,7 @@ export default function ColorGrid() {
   };
 
   return (
-    <section className="w-full pt-4 pb-8 px-6 md:px-8">
+    <section className="w-full pt-4 pb-8 px-4 md:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto space-y-6">
         <ColorInput 
           onTestPalette={handleTestPalette}
@@ -371,13 +371,18 @@ export default function ColorGrid() {
           </div>
         ) : (
           <>
-            {/* Interactive view */}
-            <div className="border rounded-lg overflow-hidden" id="color-table" data-testid="color-table">
-              {/* Category labels row */}
-              <div className="flex items-center gap-2 border-b bg-muted/30">
-                <div className="w-48 flex-shrink-0 border-r"></div>
-                
-                <div className="flex-1 flex overflow-x-auto">
+            {/* Mobile scroll hint */}
+            <div className="md:hidden text-center text-xs text-muted-foreground mb-2">
+              ← Swipe to see all tints & shades →
+            </div>
+
+            {/* Interactive view with mobile-friendly scrolling */}
+            <div className="border rounded-lg overflow-x-auto" id="color-table" data-testid="color-table">
+              <div className="min-w-[800px]">
+                {/* Category labels row */}
+                <div className="flex items-center gap-2 border-b bg-muted/30">
+                  <div className="w-32 md:w-48 flex-shrink-0 border-r"></div>
+                  
                   <div className="flex-1 flex">
                     {/* Tints section */}
                     <div className="flex-[4] flex items-center justify-center py-2 border-r">
@@ -400,57 +405,57 @@ export default function ColorGrid() {
                       </span>
                     </div>
                   </div>
+                  
+                  <div className="w-24 md:w-32 flex-shrink-0 border-l"></div>
                 </div>
-                
-                <div className="w-32 flex-shrink-0 border-l"></div>
-              </div>
 
-              {/* Percentage labels row */}
-              <div className="flex items-center gap-2 border-b bg-muted/50">
-                <div className="w-48 flex-shrink-0 p-3 border-r">
-                  <div className="font-semibold text-sm">Base Color</div>
-                </div>
-                
-                <div className="flex-1 flex overflow-x-auto">
-                  {TINT_STEPS.map((step, index) => (
-                    <div
-                      key={index}
-                      className="flex-1 min-w-[80px] p-2 text-center"
-                    >
-                      <div className="text-xs font-medium text-muted-foreground">
-                        {step === 0 ? 'Base' : step > 0 ? `+${step}%` : `−${Math.abs(step)}%`}
+                {/* Percentage labels row */}
+                <div className="flex items-center gap-2 border-b bg-muted/50">
+                  <div className="w-32 md:w-48 flex-shrink-0 p-2 md:p-3 border-r">
+                    <div className="font-semibold text-xs md:text-sm">Base Color</div>
+                  </div>
+                  
+                  <div className="flex-1 flex">
+                    {TINT_STEPS.map((step, index) => (
+                      <div
+                        key={index}
+                        className="flex-1 min-w-[70px] md:min-w-[80px] p-2 text-center"
+                      >
+                        <div className="text-xs font-medium text-muted-foreground">
+                          {step === 0 ? 'Base' : step > 0 ? `+${step}%` : `−${Math.abs(step)}%`}
+                        </div>
                       </div>
-                    </div>
-                  ))}
+                    ))}
+                  </div>
+                  
+                  <div className="w-24 md:w-32 flex-shrink-0 p-2 md:p-3 border-l">
+                    <div className="text-xs font-medium text-muted-foreground hidden md:block">Actions</div>
+                  </div>
                 </div>
-                
-                <div className="w-32 flex-shrink-0 p-3 border-l">
-                  <div className="text-xs font-medium text-muted-foreground">Actions</div>
-                </div>
-              </div>
 
-              <DndContext
-                sensors={sensors}
-                collisionDetection={closestCenter}
-                onDragEnd={handleDragEnd}
-              >
-                <SortableContext
-                  items={colors.map(c => c.id)}
-                  strategy={verticalListSortingStrategy}
+                <DndContext
+                  sensors={sensors}
+                  collisionDetection={closestCenter}
+                  onDragEnd={handleDragEnd}
                 >
-                  {colors.map(color => (
-                    <ColorTableRow
-                      key={color.id}
-                      id={color.id}
-                      color={color.color}
-                      name={color.name}
-                      onRemove={removeColor}
-                      onRename={renameColor}
-                      tintSteps={TINT_STEPS}
-                    />
-                  ))}
-                </SortableContext>
-              </DndContext>
+                  <SortableContext
+                    items={colors.map(c => c.id)}
+                    strategy={verticalListSortingStrategy}
+                  >
+                    {colors.map(color => (
+                      <ColorTableRow
+                        key={color.id}
+                        id={color.id}
+                        color={color.color}
+                        name={color.name}
+                        onRemove={removeColor}
+                        onRename={renameColor}
+                        tintSteps={TINT_STEPS}
+                      />
+                    ))}
+                  </SortableContext>
+                </DndContext>
+              </div>
             </div>
 
             {/* Export-only view (hidden) */}
