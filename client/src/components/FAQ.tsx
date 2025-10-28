@@ -7,6 +7,18 @@ import {
 
 const faqs = [
   {
+    question: "What are tints and shades?",
+    answer: "Tints are lighter versions of a color created by adding white. Shades are darker versions created by adding black. Designers use them to create depth and hierarchy without switching palettes."
+  },
+  {
+    question: "How many steps should I use?",
+    answer: "Most brands rely on 2–4 tints and 2–4 shades for consistent UI states."
+  },
+  {
+    question: "Why do some of my colors look muddy as shades?",
+    answer: "Saturation compresses near black—try adjusting hue slightly, or use Palette Fixer."
+  },
+  {
     question: "What color formats are supported?",
     answer: "You can paste HEX (#FF6F61), RGB (rgb(255, 111, 97)), or HSL (hsl(6, 93%, 71%)) values. Mix and match formats—we'll handle the conversion automatically."
   },
