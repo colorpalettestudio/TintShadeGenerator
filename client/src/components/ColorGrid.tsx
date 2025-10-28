@@ -1,9 +1,8 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Download, Upload, Shuffle, Copy, Trash2 } from "lucide-react";
+import { Download, Copy } from "lucide-react";
 import ColorInput from "./ColorInput";
-import ColorColumn from "./ColorColumn";
-import BulkImportModal from "./BulkImportModal";
+import ColorTableRow from "./ColorTableRow";
 import { useToast } from "@/hooks/use-toast";
 import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
@@ -15,45 +14,38 @@ interface Color {
   name: string;
 }
 
-//todo: remove mock functionality
-const EXAMPLE_COLORS = [
-  { color: "#FF6F61", name: "Coral Red" },
-  { color: "#6B5B95", name: "Royal Purple" },
-  { color: "#88B04B", name: "Greenery" }
-];
+const TINT_STEPS = [50, 40, 30, 20, 10, 0, -10, -20, -30, -40, -50];
 
 export default function ColorGrid() {
-  //todo: remove mock functionality
-  const [colors, setColors] = useState<Color[]>(
-    EXAMPLE_COLORS.map((c, i) => ({ ...c, id: `color-${i}` }))
-  );
-  const [bulkImportOpen, setBulkImportOpen] = useState(false);
+  const [colors, setColors] = useState<Color[]>([]);
   const { toast } = useToast();
 
-  const addColor = (colorValue: string, name?: string) => {
-    try {
-      const validColor = chroma(colorValue).hex();
-      const newColor: Color = {
-        id: `color-${Date.now()}`,
-        color: validColor,
-        name: name || `Color ${colors.length + 1}`
-      };
-      
-      if (colors.length >= 8) {
-        toast({
-          title: "Maximum colors reached",
-          description: "You can add up to 8 colors at a time.",
-          variant: "destructive"
+  const handleTestPalette = (colorInputs: string[]) => {
+    const validColors: Color[] = [];
+    
+    colorInputs.forEach((colorInput, index) => {
+      try {
+        const validColor = chroma(colorInput.trim()).hex();
+        validColors.push({
+          id: `color-${Date.now()}-${index}`,
+          color: validColor,
+          name: `Color ${index + 1}`
         });
-        return;
+      } catch (e) {
+        console.log("Invalid color skipped:", colorInput);
       }
-      
-      setColors([...colors, newColor]);
+    });
+    
+    if (validColors.length > 0) {
+      setColors(validColors);
       console.log("tintshade_generate event");
-    } catch (e) {
+      toast({ 
+        description: `Generated tints & shades for ${validColors.length} color${validColors.length !== 1 ? 's' : ''}!` 
+      });
+    } else {
       toast({
-        title: "Invalid color",
-        description: "Please enter a valid HEX, RGB, or HSL color.",
+        title: "No valid colors",
+        description: "Please enter valid HEX, RGB, or HSL colors.",
         variant: "destructive"
       });
     }
@@ -67,22 +59,8 @@ export default function ColorGrid() {
     setColors(colors.map(c => c.id === id ? { ...c, name: newName } : c));
   };
 
-  const handleBulkImport = (importedColors: Array<{ color: string; name: string }>) => {
-    const limitedColors = importedColors.slice(0, 8);
-    const newColors = limitedColors.map((c, i) => ({
-      id: `color-${Date.now()}-${i}`,
-      ...c
-    }));
-    
-    setColors(newColors);
-    console.log("bulk_import_confirm event");
-    toast({ description: `Imported ${newColors.length} colors!` });
-  };
-
-  const shuffleExamples = () => {
-    const shuffled = EXAMPLE_COLORS.sort(() => Math.random() - 0.5).slice(0, 3);
-    setColors(shuffled.map((c, i) => ({ ...c, id: `color-${Date.now()}-${i}` })));
-    console.log("Shuffle examples triggered");
+  const clearPalette = () => {
+    setColors([]);
   };
 
   const copyAllComma = () => {
@@ -104,7 +82,7 @@ export default function ColorGrid() {
   };
 
   const exportPNG = async () => {
-    const gridElement = document.getElementById("color-grid");
+    const gridElement = document.getElementById("color-table");
     if (!gridElement) return;
     
     try {
@@ -121,7 +99,7 @@ export default function ColorGrid() {
   };
 
   const exportPDF = async () => {
-    const gridElement = document.getElementById("color-grid");
+    const gridElement = document.getElementById("color-table");
     if (!gridElement) return;
     
     try {
@@ -142,11 +120,11 @@ export default function ColorGrid() {
   };
 
   const exportCSV = () => {
-    const rows = ["Column,Step,HEX"];
+    const rows = ["Color Name,Base Color,Step,HEX"];
     colors.forEach(color => {
       const swatches = generateAllSwatches(color.color);
       swatches.forEach(swatch => {
-        rows.push(`${color.name},${swatch.label},${swatch.color}`);
+        rows.push(`${color.name},${color.color},${swatch.label},${swatch.color}`);
       });
     });
     
@@ -160,44 +138,20 @@ export default function ColorGrid() {
     toast({ description: "CSV exported!" });
   };
 
-  const clearAll = () => {
-    setColors([]);
-  };
-
   return (
     <section className="w-full py-12 px-6 md:px-8">
-      <div className="max-w-7xl mx-auto">
-        <div className="mb-8 space-y-4">
-          <ColorInput onAddColor={addColor} />
-          
-          <div className="flex flex-wrap gap-2">
-            <Button
-              variant="outline"
-              onClick={() => {
-                setBulkImportOpen(true);
-                console.log("bulk_import_open event");
-              }}
-              data-testid="button-bulk-import"
-            >
-              <Upload className="w-4 h-4 mr-2" />
-              Bulk Import
-            </Button>
-            
-            <Button
-              variant="outline"
-              onClick={shuffleExamples}
-              data-testid="button-shuffle"
-            >
-              <Shuffle className="w-4 h-4 mr-2" />
-              Shuffle Example Colors
-            </Button>
-            
-            <div className="flex-1" />
-            
+      <div className="max-w-7xl mx-auto space-y-8">
+        <ColorInput 
+          onTestPalette={handleTestPalette}
+          onClear={clearPalette}
+          currentColors={colors.map(c => c.color)}
+        />
+
+        {colors.length > 0 && (
+          <div className="flex flex-wrap gap-2 justify-end">
             <Button
               variant="outline"
               onClick={copyAllComma}
-              disabled={colors.length === 0}
               data-testid="button-copy-all-comma"
             >
               <Copy className="w-4 h-4 mr-2" />
@@ -207,92 +161,89 @@ export default function ColorGrid() {
             <Button
               variant="outline"
               onClick={copyAllLines}
-              disabled={colors.length === 0}
               data-testid="button-copy-all-lines"
             >
               <Copy className="w-4 h-4 mr-2" />
-              Copy All (Line by Line)
+              Copy All (Lines)
             </Button>
             
             <Button
               variant="outline"
               onClick={exportPNG}
-              disabled={colors.length === 0}
               data-testid="button-export-png"
             >
               <Download className="w-4 h-4 mr-2" />
-              Export PNG
+              PNG
             </Button>
             
             <Button
               variant="outline"
               onClick={exportPDF}
-              disabled={colors.length === 0}
               data-testid="button-export-pdf"
             >
               <Download className="w-4 h-4 mr-2" />
-              Export PDF
+              PDF
             </Button>
             
             <Button
               variant="outline"
               onClick={exportCSV}
-              disabled={colors.length === 0}
               data-testid="button-export-csv"
             >
               <Download className="w-4 h-4 mr-2" />
-              Export CSV
+              CSV
             </Button>
-            
-            <Button
-              variant="outline"
-              onClick={clearAll}
-              disabled={colors.length === 0}
-              data-testid="button-clear-all"
-            >
-              <Trash2 className="w-4 h-4 mr-2" />
-              Clear All
-            </Button>
-          </div>
-        </div>
-
-        {colors.length === 0 ? (
-          <div className="text-center py-16 border-2 border-dashed rounded-lg">
-            <p className="text-muted-foreground mb-2">No colors added yet</p>
-            <p className="text-sm text-muted-foreground">Add a color above to get started</p>
-          </div>
-        ) : (
-          <div
-            id="color-grid"
-            className="overflow-x-auto pb-4"
-            data-testid="color-grid"
-          >
-            <div className="flex gap-6 min-w-min">
-              {colors.map(color => (
-                <ColorColumn
-                  key={color.id}
-                  id={color.id}
-                  color={color.color}
-                  name={color.name}
-                  onRemove={removeColor}
-                  onRename={renameColor}
-                />
-              ))}
-            </div>
           </div>
         )}
 
-        <BulkImportModal
-          open={bulkImportOpen}
-          onOpenChange={setBulkImportOpen}
-          onImport={handleBulkImport}
-        />
+        {colors.length === 0 ? (
+          <div className="text-center py-16 border-2 border-dashed rounded-lg">
+            <p className="text-muted-foreground mb-2">Paste your colors above and click "Test Palette"</p>
+            <p className="text-sm text-muted-foreground">Or try the sample palette to see it in action</p>
+          </div>
+        ) : (
+          <div className="border rounded-lg overflow-hidden" id="color-table" data-testid="color-table">
+            <div className="flex items-center gap-2 border-b bg-muted/50">
+              <div className="w-48 flex-shrink-0 p-3 border-r">
+                <div className="font-semibold text-sm">Color Name</div>
+              </div>
+              
+              <div className="flex-1 flex overflow-x-auto">
+                {TINT_STEPS.map((step, index) => (
+                  <div
+                    key={index}
+                    className="flex-1 min-w-[80px] p-2 text-center"
+                  >
+                    <div className="text-xs font-medium text-muted-foreground">
+                      {step === 0 ? 'Base' : step > 0 ? `+${step}%` : `−${Math.abs(step)}%`}
+                    </div>
+                  </div>
+                ))}
+              </div>
+              
+              <div className="w-32 flex-shrink-0 p-3 border-l">
+                <div className="text-xs font-medium text-muted-foreground">Actions</div>
+              </div>
+            </div>
+
+            {colors.map(color => (
+              <ColorTableRow
+                key={color.id}
+                id={color.id}
+                color={color.color}
+                name={color.name}
+                onRemove={removeColor}
+                onRename={renameColor}
+                tintSteps={TINT_STEPS}
+              />
+            ))}
+          </div>
+        )}
       </div>
     </section>
   );
 }
 
-// Helper function for CSV export
 function generateAllSwatches(baseColor: string) {
   const swatches: Array<{ color: string; label: string }> = [];
   
@@ -300,31 +251,30 @@ function generateAllSwatches(baseColor: string) {
     const base = chroma(baseColor);
     const [l, c, h] = base.oklch();
     
-    for (let i = 5; i >= 1; i--) {
-      const step = i * 10;
-      const newL = Math.min(1, l + (step / 100));
-      try {
-        const tintColor = chroma.oklch(newL, Math.max(0, c * 0.9), h);
-        swatches.push({ color: tintColor.hex().toUpperCase(), label: `+${step}%` });
-      } catch (e) {
-        const fallback = chroma.mix(baseColor, '#ffffff', step / 100);
-        swatches.push({ color: fallback.hex().toUpperCase(), label: `+${step}%` });
+    TINT_STEPS.forEach(step => {
+      if (step === 0) {
+        swatches.push({ color: base.hex().toUpperCase(), label: 'Base' });
+      } else if (step > 0) {
+        const newL = Math.min(1, l + (step / 100));
+        try {
+          const tintColor = chroma.oklch(newL, Math.max(0, c * 0.9), h);
+          swatches.push({ color: tintColor.hex().toUpperCase(), label: `+${step}%` });
+        } catch (e) {
+          const fallback = chroma.mix(baseColor, '#ffffff', step / 100);
+          swatches.push({ color: fallback.hex().toUpperCase(), label: `+${step}%` });
+        }
+      } else {
+        const absStep = Math.abs(step);
+        const newL = Math.max(0, l - (absStep / 100));
+        try {
+          const shadeColor = chroma.oklch(newL, Math.max(0, c * 0.9), h);
+          swatches.push({ color: shadeColor.hex().toUpperCase(), label: `−${absStep}%` });
+        } catch (e) {
+          const fallback = chroma.mix(baseColor, '#000000', absStep / 100);
+          swatches.push({ color: fallback.hex().toUpperCase(), label: `−${absStep}%` });
+        }
       }
-    }
-    
-    swatches.push({ color: base.hex().toUpperCase(), label: 'Base' });
-    
-    for (let i = 1; i <= 5; i++) {
-      const step = i * 10;
-      const newL = Math.max(0, l - (step / 100));
-      try {
-        const shadeColor = chroma.oklch(newL, Math.max(0, c * 0.9), h);
-        swatches.push({ color: shadeColor.hex().toUpperCase(), label: `−${step}%` });
-      } catch (e) {
-        const fallback = chroma.mix(baseColor, '#000000', step / 100);
-        swatches.push({ color: fallback.hex().toUpperCase(), label: `−${step}%` });
-      }
-    }
+    });
   } catch (error) {
     console.error("Error generating swatches:", error);
   }

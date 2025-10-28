@@ -1,5 +1,3 @@
-import { Link } from "wouter";
-
 const relatedTools = [
   { name: "Color Code Converter", href: "https://thecolorcodeconverter.com" },
   { name: "Color Palette Tester", href: "https://colorpalettetester.com" },
@@ -42,25 +40,31 @@ export default function Footer() {
             <h4 className="font-semibold mb-4">Legal</h4>
             <ul className="space-y-2">
               <li>
-                <Link href="/privacy-policy">
-                  <a className="text-sm text-muted-foreground hover:text-foreground transition-colors hover-elevate rounded px-1 py-0.5 -mx-1" data-testid="link-privacy">
-                    Privacy Policy
-                  </a>
-                </Link>
+                <a
+                  href="/privacy-policy"
+                  className="text-sm text-muted-foreground hover:text-foreground transition-colors hover-elevate rounded px-1 py-0.5 -mx-1"
+                  data-testid="link-privacy"
+                >
+                  Privacy Policy
+                </a>
               </li>
               <li>
-                <Link href="/terms">
-                  <a className="text-sm text-muted-foreground hover:text-foreground transition-colors hover-elevate rounded px-1 py-0.5 -mx-1" data-testid="link-terms">
-                    Terms of Service
-                  </a>
-                </Link>
+                <a
+                  href="/terms"
+                  className="text-sm text-muted-foreground hover:text-foreground transition-colors hover-elevate rounded px-1 py-0.5 -mx-1"
+                  data-testid="link-terms"
+                >
+                  Terms of Service
+                </a>
               </li>
               <li>
-                <Link href="/contact">
-                  <a className="text-sm text-muted-foreground hover:text-foreground transition-colors hover-elevate rounded px-1 py-0.5 -mx-1" data-testid="link-contact">
-                    Contact
-                  </a>
-                </Link>
+                <a
+                  href="/contact"
+                  className="text-sm text-muted-foreground hover:text-foreground transition-colors hover-elevate rounded px-1 py-0.5 -mx-1"
+                  data-testid="link-contact"
+                >
+                  Contact
+                </a>
               </li>
             </ul>
           </div>
