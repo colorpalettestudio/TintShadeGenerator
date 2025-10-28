@@ -6,7 +6,6 @@ import CTACard from "@/components/CTACard";
 import FeatureSection from "@/components/FeatureSection";
 import ColorPaletteFixerAd from "@/components/ColorPaletteFixerAd";
 import FAQ from "@/components/FAQ";
-import RelatedTools from "@/components/RelatedTools";
 import Footer from "@/components/Footer";
 
 export default function Home() {
@@ -24,7 +23,6 @@ export default function Home() {
       <FeatureSection />
       <ColorPaletteFixerAd />
       <FAQ />
-      <RelatedTools />
       
       <Footer />
     </div>
