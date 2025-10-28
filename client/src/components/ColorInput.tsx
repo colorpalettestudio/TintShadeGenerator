@@ -30,7 +30,7 @@ export default function ColorInput({ onTestPalette, onClear, currentColors = [] 
   };
 
   const handleTrySample = () => {
-    const sampleColors = "#FF6F61, #6B5B95, #88B04B, #F7CAC9, #92A8D1, #955251";
+    const sampleColors = "#f91d71, #fd806a, #ffd025, #74d551, #76c4f4, #7c70ff";
     setInputValue(sampleColors);
     onTestPalette(sampleColors.split(", "));
     console.log("Try sample palette clicked");
