@@ -4,7 +4,6 @@ import TintShadeExplainer from "@/components/TintShadeExplainer";
 import HowToUse from "@/components/HowToUse";
 import FeatureSection from "@/components/FeatureSection";
 import ColorPaletteFixerAd from "@/components/ColorPaletteFixerAd";
-import FAQ from "@/components/FAQ";
 import Footer from "@/components/Footer";
 
 export default function Home() {
@@ -16,7 +15,6 @@ export default function Home() {
       <HowToUse />
       <FeatureSection />
       <ColorPaletteFixerAd />
-      <FAQ />
       
       <Footer />
     </div>

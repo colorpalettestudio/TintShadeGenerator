@@ -1,7 +1,5 @@
 const relatedTools = [
-  { name: "Color Code Converter", href: "https://thecolorcodeconverter.com" },
-  { name: "Color Palette Tester", href: "https://colorpalettetester.com" },
-  { name: "Color Palette Generator", href: "https://colorpalettegenerator.com" },
+  { name: "Color Palette Studio", href: "https://thecolorpalettestudio.com" },
   { name: "Color Palette Fixer", href: "https://colorpalettefixer.com" }
 ];
 
