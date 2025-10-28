@@ -9,15 +9,18 @@ export default function CTACard() {
   };
 
   return (
-    <Card className="bg-gradient-to-br from-primary/5 to-accent/5 border-primary/20">
-      <CardContent className="p-8 md:p-10">
+    <Card className="border-2 border-primary/10 bg-gradient-to-br from-primary/5 to-accent/5">
+      <CardContent className="p-8">
         <div className="flex flex-col md:flex-row items-center justify-between gap-6">
           <div className="flex-1 text-center md:text-left">
-            <h3 className="text-2xl font-semibold mb-2">
-              Want balanced brand colors next?
+            <div className="inline-block px-3 py-1 bg-primary/10 rounded-full text-xs font-semibold text-primary mb-3">
+              Related Tool
+            </div>
+            <h3 className="text-xl font-bold mb-2">
+              Need consistent brand colors?
             </h3>
-            <p className="text-muted-foreground">
-              Try Color Palette Fixer — the fastest way to even out hue, saturation, and neutrals.
+            <p className="text-muted-foreground text-sm">
+              Use Color Palette Fixer to balance hue and saturation across your entire palette.
             </p>
           </div>
           

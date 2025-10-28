@@ -1,11 +1,10 @@
 import Hero from "@/components/Hero";
 import ColorGrid from "@/components/ColorGrid";
 import CTACard from "@/components/CTACard";
-import HowItWorks from "@/components/HowItWorks";
-import WhyDesignersUse from "@/components/WhyDesignersUse";
-import TintsShadesExplainer from "@/components/TintsShadesExplainer";
-import SupportedFormats from "@/components/SupportedFormats";
+import FeatureSection from "@/components/FeatureSection";
+import UseCases from "@/components/UseCases";
 import FAQ from "@/components/FAQ";
+import RelatedTools from "@/components/RelatedTools";
 import Footer from "@/components/Footer";
 
 export default function Home() {
@@ -18,11 +17,10 @@ export default function Home() {
         <CTACard />
       </div>
       
-      <HowItWorks />
-      <WhyDesignersUse />
-      <TintsShadesExplainer />
-      <SupportedFormats />
+      <FeatureSection />
+      <UseCases />
       <FAQ />
+      <RelatedTools />
       
       <Footer />
     </div>
