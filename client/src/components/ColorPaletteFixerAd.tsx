@@ -1,6 +1,6 @@
 import { Check, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import fixerImage from "@assets/2_1761678638938.png";
+import fixerImage from "@assets/FBA EDU - Brand Guidelines_1761685045489.png";
 
 const features = [
   "Diagnoses harmony, saturation & contrast issues",
@@ -39,7 +39,9 @@ export default function ColorPaletteFixerAd() {
                   className="flex gap-3 items-start"
                   data-testid={`fixer-feature-${index}`}
                 >
-                  <Check className="w-5 h-5 text-black flex-shrink-0 mt-0.5" />
+                  <div className="flex-shrink-0 w-6 h-6 rounded-full bg-black flex items-center justify-center mt-0.5">
+                    <Check className="w-4 h-4 text-white" strokeWidth={3} />
+                  </div>
                   <span className="text-lg">{feature}</span>
                 </div>
               ))}
