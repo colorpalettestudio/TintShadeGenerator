@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Download, Copy } from "lucide-react";
 import ColorInput from "./ColorInput";
@@ -35,6 +35,29 @@ const TINT_STEPS = [95, 75, 50, 25, 0, -25, -50, -75, -95];
 export default function ColorGrid() {
   const [colors, setColors] = useState<Color[]>([]);
   const { toast } = useToast();
+
+  // Auto-load sample palette on mount
+  useEffect(() => {
+    const sampleColors = ["#f91d71", "#fd806a", "#ffd025", "#74d551", "#76c4f4", "#7c70ff"];
+    const validColors: Color[] = [];
+    
+    sampleColors.forEach((colorInput, index) => {
+      try {
+        const validColor = chroma(colorInput.trim()).hex();
+        validColors.push({
+          id: `color-${Date.now()}-${index}`,
+          color: validColor,
+          name: validColor.toUpperCase()
+        });
+      } catch (e) {
+        console.log("Invalid color skipped:", colorInput);
+      }
+    });
+    
+    if (validColors.length > 0) {
+      setColors(validColors);
+    }
+  }, []);
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
