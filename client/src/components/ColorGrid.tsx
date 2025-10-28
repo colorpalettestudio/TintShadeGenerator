@@ -14,7 +14,8 @@ interface Color {
   name: string;
 }
 
-const TINT_STEPS = [50, 40, 30, 20, 10, 0, -10, -20, -30, -40, -50];
+// Updated to 25%, 50%, 75%, 95% for tints and shades
+const TINT_STEPS = [95, 75, 50, 25, 0, -25, -50, -75, -95];
 
 export default function ColorGrid() {
   const [colors, setColors] = useState<Color[]>([]);
@@ -244,35 +245,25 @@ export default function ColorGrid() {
   );
 }
 
+// Helper function for CSV export - uses simple mixing approach
 function generateAllSwatches(baseColor: string) {
   const swatches: Array<{ color: string; label: string }> = [];
   
   try {
     const base = chroma(baseColor);
-    const [l, c, h] = base.oklch();
     
     TINT_STEPS.forEach(step => {
       if (step === 0) {
         swatches.push({ color: base.hex().toUpperCase(), label: 'Base' });
       } else if (step > 0) {
-        const newL = Math.min(1, l + (step / 100));
-        try {
-          const tintColor = chroma.oklch(newL, Math.max(0, c * 0.9), h);
-          swatches.push({ color: tintColor.hex().toUpperCase(), label: `+${step}%` });
-        } catch (e) {
-          const fallback = chroma.mix(baseColor, '#ffffff', step / 100);
-          swatches.push({ color: fallback.hex().toUpperCase(), label: `+${step}%` });
-        }
+        // Tint: mix with white
+        const tintColor = chroma.mix(base, '#ffffff', step / 100, 'rgb');
+        swatches.push({ color: tintColor.hex().toUpperCase(), label: `+${step}%` });
       } else {
+        // Shade: mix with black
         const absStep = Math.abs(step);
-        const newL = Math.max(0, l - (absStep / 100));
-        try {
-          const shadeColor = chroma.oklch(newL, Math.max(0, c * 0.9), h);
-          swatches.push({ color: shadeColor.hex().toUpperCase(), label: `−${absStep}%` });
-        } catch (e) {
-          const fallback = chroma.mix(baseColor, '#000000', absStep / 100);
-          swatches.push({ color: fallback.hex().toUpperCase(), label: `−${absStep}%` });
-        }
+        const shadeColor = chroma.mix(base, '#000000', absStep / 100, 'rgb');
+        swatches.push({ color: shadeColor.hex().toUpperCase(), label: `−${absStep}%` });
       }
     });
   } catch (error) {

@@ -24,45 +24,31 @@ function generateTintsAndShades(baseColor: string, steps: number[]): ColorSwatch
   
   try {
     const base = chroma(baseColor);
-    const [l, c, h] = base.oklch();
     
     steps.forEach(step => {
       if (step === 0) {
+        // Base color
         swatches.push({
           color: base.hex(),
           label: 'Base'
         });
       } else if (step > 0) {
-        const newL = Math.min(1, l + (step / 100));
-        try {
-          const tintColor = chroma.oklch(newL, Math.max(0, c * 0.9), h);
-          swatches.push({
-            color: tintColor.hex(),
-            label: `+${step}%`
-          });
-        } catch (e) {
-          const fallback = chroma.mix(baseColor, '#ffffff', step / 100);
-          swatches.push({
-            color: fallback.hex(),
-            label: `+${step}%`
-          });
-        }
+        // Tint: mix base color with white at the given percentage
+        // step% white mixed with (100-step)% base
+        const tintColor = chroma.mix(base, '#ffffff', step / 100, 'rgb');
+        swatches.push({
+          color: tintColor.hex(),
+          label: `+${step}%`
+        });
       } else {
+        // Shade: mix base color with black at the given percentage
+        // abs(step)% black mixed with (100-abs(step))% base
         const absStep = Math.abs(step);
-        const newL = Math.max(0, l - (absStep / 100));
-        try {
-          const shadeColor = chroma.oklch(newL, Math.max(0, c * 0.9), h);
-          swatches.push({
-            color: shadeColor.hex(),
-            label: `−${absStep}%`
-          });
-        } catch (e) {
-          const fallback = chroma.mix(baseColor, '#000000', absStep / 100);
-          swatches.push({
-            color: fallback.hex(),
-            label: `−${absStep}%`
-          });
-        }
+        const shadeColor = chroma.mix(base, '#000000', absStep / 100, 'rgb');
+        swatches.push({
+          color: shadeColor.hex(),
+          label: `−${absStep}%`
+        });
       }
     });
   } catch (error) {
