@@ -1,3 +1,5 @@
+import { Link } from "wouter";
+
 const relatedTools = [
   { name: "Color Palette Fixer", href: "https://colorpalettefixer.com" }
 ];
@@ -46,31 +48,31 @@ export default function Footer() {
             <h4 className="font-semibold mb-4">Legal</h4>
             <ul className="space-y-2">
               <li>
-                <a
+                <Link
                   href="/privacy-policy"
                   className="text-sm text-muted-foreground hover:text-foreground transition-colors hover-elevate rounded px-1 py-0.5 -mx-1"
                   data-testid="link-privacy"
                 >
                   Privacy Policy
-                </a>
+                </Link>
               </li>
               <li>
-                <a
+                <Link
                   href="/terms"
                   className="text-sm text-muted-foreground hover:text-foreground transition-colors hover-elevate rounded px-1 py-0.5 -mx-1"
                   data-testid="link-terms"
                 >
                   Terms of Service
-                </a>
+                </Link>
               </li>
               <li>
-                <a
+                <Link
                   href="/contact"
                   className="text-sm text-muted-foreground hover:text-foreground transition-colors hover-elevate rounded px-1 py-0.5 -mx-1"
                   data-testid="link-contact"
                 >
                   Contact
-                </a>
+                </Link>
               </li>
             </ul>
           </div>
