@@ -1,5 +1,5 @@
 const relatedTools = [
-  { name: "Color Palette Fixer", href: "https://colorpalettefixer.com" }
+  { name: "Color Palette Fixer", href: "https://thecolorpalettestudio.com/products/color-palette-fixer" }
 ];
 
 export default function Footer() {
